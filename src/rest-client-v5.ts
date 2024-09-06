@@ -9,6 +9,7 @@ import {
   AccountTypeV5,
   AddOrReduceMarginParamsV5,
   AddOrReduceMarginResultV5,
+  AffiliateUserInfoV5,
   AllCoinsBalanceV5,
   AllowedDepositCoinInfoV5,
   AmendOrderParamsV5,
@@ -33,17 +34,27 @@ import {
   CoinGreeksV5,
   CoinInfoV5,
   CollateralInfoV5,
+  ConfirmNewRiskLimitParamsV5,
+  ConvertCoinSpecV5,
+  ConvertCoinsParamsV5,
+  ConvertHistoryRecordV5,
+  ConvertQuoteV5,
+  ConvertStatusV5,
   CreateSubApiKeyParamsV5,
   CreateSubApiKeyResultV5,
   CreateSubMemberParamsV5,
   CreateSubMemberResultV5,
   CursorListV5,
   CursorRowsV5,
+  DCPInfoV5,
   DeleteSubMemberParamsV5,
   DeliveryPriceV5,
   DeliveryRecordV5,
   DepositAddressResultV5,
   DepositRecordV5,
+  ExchangeBrokerAccountInfoV5,
+  ExchangeBrokerEarningResultV5,
+  ExchangeBrokerSubAccountDepositRecordV5,
   ExecutionV5,
   FeeRateV5,
   FundingRateHistoryResponseV5,
@@ -54,11 +65,15 @@ import {
   GetAllowedDepositCoinInfoParamsV5,
   GetAssetInfoParamsV5,
   GetBorrowHistoryParamsV5,
+  GetBrokerSubAccountDepositsV5,
+  GetClassicTransactionLogsParamsV5,
   GetClosedPnLParamsV5,
   GetCoinExchangeRecordParamsV5,
+  GetConvertHistoryParamsV5,
   GetDeliveryPriceParamsV5,
   GetDeliveryRecordParamsV5,
   GetDepositRecordParamsV5,
+  GetExchangeBrokerEarningsParamsV5,
   GetExecutionListParamsV5,
   GetFeeRateParamsV5,
   GetFundingRateHistoryParamsV5,
@@ -69,22 +84,29 @@ import {
   GetInternalDepositRecordParamsV5,
   GetInternalTransferParamsV5,
   GetKlineParamsV5,
+  GetLongShortRatioParamsV5,
   GetMarkPriceKlineParamsV5,
+  GetMovePositionHistoryParamsV5,
   GetOpenInterestParamsV5,
   GetOptionDeliveryPriceParamsV5,
   GetOrderbookParamsV5,
   GetPreUpgradeClosedPnlParamsV5,
+  GetPreUpgradeOptionDeliveryRecordParamsV5,
   GetPreUpgradeOrderHistoryParamsV5,
   GetPreUpgradeTradeHistoryParamsV5,
+  GetPreUpgradeTransactionLogParamsV5,
+  GetPreUpgradeUSDCSessionParamsV5,
   GetPremiumIndexPriceKlineParamsV5,
   GetPublicTradingHistoryParamsV5,
   GetRiskLimitParamsV5,
   GetSettlementRecordParamsV5,
   GetSpotLeveragedTokenOrderHistoryParamsV5,
+  GetSubAccountAllApiKeysParamsV5,
   GetSubAccountDepositRecordParamsV5,
   GetTickersParamsV5,
   GetTransactionLogParamsV5,
   GetUniversalTransferRecordsParamsV5,
+  GetVIPMarginDataParamsV5,
   GetWalletBalanceParamsV5,
   GetWithdrawalRecordsParamsV5,
   HistoricalVolatilityV5,
@@ -94,8 +116,12 @@ import {
   InternalTransferRecordV5,
   LeverageTokenInfoV5,
   LeveragedTokenMarketResultV5,
+  LongShortRatioV5,
   MMPModifyParamsV5,
   MMPStateV5,
+  MovePositionHistoryV5,
+  MovePositionParamsV5,
+  MovePositionResultV5,
   OHLCKlineV5,
   OHLCVKlineV5,
   OpenInterestResponseV5,
@@ -106,6 +132,9 @@ import {
   OrderbookResponseV5,
   PositionInfoParamsV5,
   PositionV5,
+  PreUpgradeOptionsDelivery,
+  PreUpgradeTransaction,
+  PreUpgradeUSDCSessionSettlement,
   PublicTradeV5,
   PurchaseSpotLeveragedTokenParamsV5,
   PurchaseSpotLeveragedTokenResultV5,
@@ -113,6 +142,7 @@ import {
   RedeemSpotLeveragedTokenResultV5,
   RepayLiabilityParamsV5,
   RepayLiabilityResultV5,
+  RequestConvertQuoteParamsV5,
   RiskLimitV5,
   SetAutoAddMarginParamsV5,
   SetCollateralCoinParamsV5,
@@ -124,6 +154,8 @@ import {
   SettlementRecordV5,
   SpotBorrowCheckResultV5,
   SpotLeveragedTokenOrderHistoryV5,
+  SpotMarginStateV5,
+  SubAccountAllApiKeysResultV5,
   SubMemberV5,
   SwitchIsolatedMarginParamsV5,
   SwitchPositionModeParamsV5,
@@ -137,6 +169,8 @@ import {
   UniversalTransferRecordV5,
   UpdateApiKeyParamsV5,
   UpdateApiKeyResultV5,
+  VIPMarginDataV5,
+  VaspEntityV5,
   WalletBalanceV5,
   WithdrawParamsV5,
   WithdrawalRecordV5,
@@ -390,6 +424,12 @@ export class RestClientV5 extends BaseRestClient {
     return this.get('/v5/market/delivery-price', params);
   }
 
+  getLongShortRatio(
+    params: GetLongShortRatioParamsV5,
+  ): Promise<APIResponseV3WithTime<{ list: LongShortRatioV5[] }>> {
+    return this.get('/v5/market/account-ratio', params);
+  }
+
   /**
    *
    ****** Trade APIs
@@ -525,6 +565,10 @@ export class RestClientV5 extends BaseRestClient {
    *
    * If you need to turn it on/off, you can contact your client manager for consultation and application.
    * The default time window is 10 seconds.
+   *
+   * Only for institutional clients!
+   *
+   * If it doesn't work, use v2!
    */
   setDisconnectCancelAllWindow(
     category: 'option',
@@ -534,6 +578,21 @@ export class RestClientV5 extends BaseRestClient {
       category,
       timeWindow,
     });
+  }
+
+  /**
+   * This endpoint allows you to set the disconnection protect time window. Covers: option (unified account).
+   *
+   * If you need to turn it on/off, you can contact your client manager for consultation and application.
+   * The default time window is 10 seconds.
+   *
+   * Only for institutional clients!
+   */
+  setDisconnectCancelAllWindowV2(params: {
+    product: 'OPTION' | 'SPOT' | 'DERIVATIVES';
+    timeWindow: number;
+  }): Promise<APIResponseV3<undefined>> {
+    return this.postPrivate('/v5/order/disconnected-cancel-all', params);
   }
 
   /**
@@ -691,6 +750,55 @@ export class RestClientV5 extends BaseRestClient {
   }
 
   /**
+   * Move positions between sub-master, master-sub, or sub-sub UIDs.
+   *
+   * Unified account covers: USDT perpetual / USDC contract / Spot / Option
+   *
+   * INFO
+   * The endpoint can only be called by master UID api key
+   * UIDs must be the same master-sub account relationship
+   * The trades generated from move-position endpoint will not be displayed in the Recent Trade (Rest API & Websocket)
+   * There is no trading fee
+   * fromUid and toUid both should be Unified trading accounts, and they need to be one-way mode when moving the positions
+   * Please note that once executed, you will get execType=MovePosition entry from Get Trade History, Get Closed Pnl, and stream from Execution.
+   */
+  movePosition(
+    params: MovePositionParamsV5,
+  ): Promise<APIResponseV3WithTime<MovePositionResultV5>> {
+    return this.postPrivate('/v5/position/move-positions', params);
+  }
+
+  /**
+   * Query moved position data by master UID api key.
+   *
+   * Unified account covers: USDT perpetual / USDC contract / Spot / Option
+   */
+  getMovePositionHistory(params?: GetMovePositionHistoryParamsV5): Promise<
+    APIResponseV3WithTime<{
+      list: MovePositionHistoryV5[];
+      nextPageCursor: string;
+    }>
+  > {
+    return this.getPrivate('/v5/position/move-history', params);
+  }
+
+  /**
+   * Confirm new risk limit.
+   *
+   * It is only applicable when the user is marked as only reducing positions (please see the isReduceOnly field in the Get Position Info interface).
+   * After the user actively adjusts the risk level, this interface is called to try to calculate the adjusted risk level, and if it passes (retCode=0),
+   * the system will remove the position reduceOnly mark. You are recommended to call Get Position Info to check isReduceOnly field.
+   *
+   * Unified account covers: USDT perpetual / USDC contract / Inverse contract
+   * Classic account covers: USDT perpetual / Inverse contract
+   */
+  confirmNewRiskLimit(
+    params: ConfirmNewRiskLimitParamsV5,
+  ): Promise<APIResponseV3WithTime<{}>> {
+    return this.postPrivate('/v5/position/confirm-pending-mmr', params);
+  }
+
+  /**
    *
    ****** Pre-upgrade APIs
    *
@@ -734,6 +842,55 @@ export class RestClientV5 extends BaseRestClient {
     params: GetPreUpgradeClosedPnlParamsV5,
   ): Promise<APIResponseV3WithTime<CategoryCursorListV5<ClosedPnLV5[]>>> {
     return this.getPrivate('/v5/pre-upgrade/position/closed-pnl', params);
+  }
+
+  /**
+   * Query transaction logs which occurred in the USDC Derivatives wallet before the account was upgraded to a Unified account.
+   *
+   * You can get USDC Perpetual, Option records.
+   *
+   * INFO
+   * USDC Perpeual & Option support the recent 6 months data. Please download older data via GUI
+   */
+  getPreUpgradeTransactions(
+    params: GetPreUpgradeTransactionLogParamsV5,
+  ): Promise<
+    APIResponseV3WithTime<{
+      list: PreUpgradeTransaction[];
+      nextPageCursor: string;
+    }>
+  > {
+    return this.getPrivate('/v5/pre-upgrade/account/transaction-log', params);
+  }
+
+  /**
+   * Query delivery records of Option before you upgraded the account to a Unified account, sorted by deliveryTime in descending order.
+   *
+   * INFO
+   * Supports the recent 6 months data. Please download older data via GUI
+   */
+  getPreUpgradeOptionDeliveryRecord(
+    params: GetPreUpgradeOptionDeliveryRecordParamsV5,
+  ): Promise<
+    APIResponseV3WithTime<CategoryCursorListV5<PreUpgradeOptionsDelivery[]>>
+  > {
+    return this.getPrivate('/v5/pre-upgrade/asset/delivery-record', params);
+  }
+
+  /**
+   * Query session settlement records of USDC perpetual before you upgrade the account to Unified account.
+   *
+   * INFO
+   * USDC Perpetual support the recent 6 months data. Please download older data via GUI
+   */
+  getPreUpgradeUSDCSessionSettlements(
+    params: GetPreUpgradeUSDCSessionParamsV5,
+  ): Promise<
+    APIResponseV3WithTime<
+      CategoryCursorListV5<PreUpgradeUSDCSessionSettlement[]>
+    >
+  > {
+    return this.getPrivate('/v5/pre-upgrade/asset/settlement-record', params);
   }
 
   /**
@@ -853,6 +1010,30 @@ export class RestClientV5 extends BaseRestClient {
   }
 
   /**
+   * Query transaction logs in the derivatives wallet (classic account), and inverse derivatives wallet (upgraded to UTA).
+   *
+   * API key permission: "Contract - Position"
+   */
+  getClassicTransactionLogs(
+    params?: GetClassicTransactionLogsParamsV5,
+  ): Promise<
+    APIResponseV3WithTime<{ list: TransactionLogV5[]; nextPageCursor: string }>
+  > {
+    return this.getPrivate('/v5/account/contract-transaction-log', params);
+  }
+
+  /**
+   * Query the SMP group ID of self match prevention.
+   */
+  getSMPGroup(): Promise<
+    APIResponseV3WithTime<{
+      smpGroup: number;
+    }>
+  > {
+    return this.getPrivate('/v5/account/smp-group');
+  }
+
+  /**
    * Default is regular margin mode.
    *
    * This mode is valid for USDT Perp, USDC Perp and USDC Option.
@@ -865,6 +1046,19 @@ export class RestClientV5 extends BaseRestClient {
     return this.postPrivate('/v5/account/set-margin-mode', {
       setMarginMode: marginMode,
     });
+  }
+
+  /**
+   * Turn on/off Spot hedging feature in Portfolio margin for Unified account.
+   *
+   * INFO
+   * Only unified account is applicable
+   * Only portfolio margin mode is applicable
+   */
+  setSpotHedging(params: {
+    setHedgingMode: 'ON' | 'OFF';
+  }): Promise<APIResponseV3WithTime<{}>> {
+    return this.postPrivate('/v5/account/set-hedging-mode', params);
   }
 
   /**
@@ -888,6 +1082,19 @@ export class RestClientV5 extends BaseRestClient {
     baseCoin: string,
   ): Promise<APIResponseV3WithTime<{ result: MMPStateV5[] }>> {
     return this.getPrivate('/v5/account/mmp-state', { baseCoin });
+  }
+
+  /**
+   * Query the DCP configuration of the account's contracts (USDT perpetual, USDC perpetual and USDC Futures) / spot / options.
+   *
+   * Only the configured main / sub account can query information from this API. Calling this API by an account always returns empty.
+   *
+   * INFO
+   * support linear contract (USDT, USDC Perp & USDC Futures) / Spot / Options only
+   * Unified account only
+   */
+  getDCPInfo(): Promise<APIResponseV3WithTime<{ dcpInfos: DCPInfoV5[] }>> {
+    return this.getPrivate('/v5/account/query-dcp-info');
   }
 
   /**
@@ -1225,6 +1432,17 @@ export class RestClientV5 extends BaseRestClient {
   }
 
   /**
+   * Get Exchange Entity List.
+   *
+   * This endpoint is particularly used for kyc=KOR users. When withdraw funds, you need to fill entity id.
+   */
+  getExchangeEntities(): Promise<
+    APIResponseV3WithTime<{ vasp: VaspEntityV5[] }>
+  > {
+    return this.getPrivate('/v5/asset/withdraw/vasp/list');
+  }
+
+  /**
    * Withdraw assets from the SPOT account.
    *
    * CAUTION: Make sure you have whitelisted your wallet address before calling this endpoint.
@@ -1246,6 +1464,68 @@ export class RestClientV5 extends BaseRestClient {
     id: string,
   ): Promise<APIResponseV3WithTime<{ status: 0 | 1 }>> {
     return this.postPrivate('/v5/asset/withdraw/cancel', { id });
+  }
+
+  /**
+   * Query the coin list of convert from (to).
+   */
+  getConvertCoins(params: ConvertCoinsParamsV5): Promise<
+    APIResponseV3WithTime<{
+      coins: ConvertCoinSpecV5[];
+    }>
+  > {
+    return this.getPrivate('/v5/asset/exchange/query-coin-list', params);
+  }
+
+  /**
+   * Request a quote for converting coins.
+   */
+  requestConvertQuote(
+    params: RequestConvertQuoteParamsV5,
+  ): Promise<APIResponseV3WithTime<ConvertQuoteV5>> {
+    return this.postPrivate('/v5/asset/exchange/quote-apply', params);
+  }
+
+  /**
+   * Confirm a quote for converting coins.
+   */
+  confirmConvertQuote(params: { quoteTxId: string }): Promise<
+    APIResponseV3WithTime<{
+      quoteTxId: string;
+      exchangeStatus: 'init' | 'processing' | 'success' | 'failure';
+    }>
+  > {
+    return this.postPrivate('/v5/asset/exchange/convert-execute', params);
+  }
+
+  /**
+   * Query the exchange result by sending quoteTxId.
+   */
+  getConvertStatus(params: {
+    quoteTxId?: string;
+    accountType:
+      | 'eb_convert_funding'
+      | 'eb_convert_uta'
+      | 'eb_convert_spot'
+      | 'eb_convert_contract'
+      | 'eb_convert_inverse';
+  }): Promise<
+    APIResponseV3WithTime<{
+      result: ConvertStatusV5;
+    }>
+  > {
+    return this.getPrivate('/v5/asset/exchange/convert-result-query', params);
+  }
+
+  /**
+   * Query the conversion history.
+   */
+  getConvertHistory(params?: GetConvertHistoryParamsV5): Promise<
+    APIResponseV3WithTime<{
+      list: ConvertHistoryRecordV5[];
+    }>
+  > {
+    return this.getPrivate('/v5/asset/exchange/query-convert-history', params);
   }
 
   /**
@@ -1279,12 +1559,36 @@ export class RestClientV5 extends BaseRestClient {
   }
 
   /**
-   * This endpoint allows you to get a list of all sub UID of master account.
+   * This endpoint allows you to get a list of all sub UID of master account. At most 10k subaccounts.
    */
   getSubUIDList(): Promise<
     APIResponseV3WithTime<{ subMembers: SubMemberV5[] }>
   > {
     return this.getPrivate('/v5/user/query-sub-members');
+  }
+
+  /**
+   * This endpoint allows you to get a list of all sub UID of master account. No limit on the number of subaccounts.
+   */
+  getSubUIDListUnlimited(params?: {
+    pageSize?: string;
+    nextCursor?: string;
+  }): Promise<
+    APIResponseV3WithTime<{
+      subMembers: SubMemberV5[];
+      nextCursor: string;
+    }>
+  > {
+    return this.getPrivate('/v5/user/submembers', params);
+  }
+
+  /**
+   * Query all api keys information of a sub UID.
+   */
+  getSubAccountAllApiKeys(
+    params: GetSubAccountAllApiKeysParamsV5,
+  ): Promise<APIResponseV3WithTime<SubAccountAllApiKeysResultV5>> {
+    return this.getPrivate('/v5/user/sub-apikeys', params);
   }
 
   /**
@@ -1310,6 +1614,17 @@ export class RestClientV5 extends BaseRestClient {
     return this.getPrivate('/v5/user/query-api');
   }
 
+  getUIDWalletType(params: { memberIds: string }): Promise<
+    APIResponseV3WithTime<{
+      accounts: {
+        uid: string;
+        accountType: string[];
+      }[];
+    }>
+  > {
+    return this.getPrivate('/v5/user/query-api', params);
+  }
+
   /**
    * Modify the settings of a master API key. Use the API key pending to be modified to call the endpoint. Use master user's API key only.
    *
@@ -1324,10 +1639,11 @@ export class RestClientV5 extends BaseRestClient {
 
   /**
    * This endpoint modifies the settings of a sub API key.
-   * Use the API key pending to be modified to call the endpoint.
-   * Only the API key that calls this interface can be modified.
+   * Use the API key pending to be modified to call the endpoint or use master account api key to manage its sub account api key.
+   * The API key must have one of the below permissions in order to call this endpoint
    *
-   * The API key must own "Account Transfer" permission to be allowed to call this API endpoint.
+   *  - sub API key: "Account Transfer", "Sub Member Transfer"
+   *  - master API Key: "Account Transfer", "Sub Member Transfer", "Withdrawal"
    */
   updateSubApiKey(
     params: UpdateApiKeyParamsV5,
@@ -1353,12 +1669,15 @@ export class RestClientV5 extends BaseRestClient {
    *
    * TIP:
    * The API key must have one of the permissions to be allowed to call the following API endpoint.
-   * - sub API key: "Account Transfer"
+   * - sub API key: "Account Transfer", "Sub Member Transfer"
+   * - master API Key: "Account Transfer", "Sub Member Transfer", "Withdrawal"
    *
-   * DANGER: BE CAREFUL! The API key used to call this interface will be invalid immediately.
+   * DANGER: BE CAREFUL! The sub API key used to call this interface will be invalid immediately.
    */
-  deleteSubApiKey(): Promise<APIResponseV3WithTime<{}>> {
-    return this.postPrivate('/v5/user/delete-sub-api');
+  deleteSubApiKey(params?: {
+    apikey?: string;
+  }): Promise<APIResponseV3WithTime<{}>> {
+    return this.postPrivate('/v5/user/delete-sub-api', params);
   }
 
   /**
@@ -1372,6 +1691,22 @@ export class RestClientV5 extends BaseRestClient {
     params: DeleteSubMemberParamsV5,
   ): Promise<APIResponseV3WithTime<{}>> {
     return this.postPrivate('/v5/user/del-submember', params);
+  }
+
+  /**
+   * Get Affiliate User Info.
+   *
+   * This API is used for affiliate to get their users information.
+   *
+   * TIP
+   * Use master UID only
+   * The api key can only have "Affiliate" permission
+   * The transaction volume and deposit amount are the total amount of the user done on Bybit, and have nothing to do with commission settlement. Any transaction volume data related to commission settlement is subject to the Affiliate Portal.
+   */
+  getAffiliateUserInfo(params: {
+    uid: string;
+  }): Promise<APIResponseV3WithTime<AffiliateUserInfoV5>> {
+    return this.getPrivate('/v5/user/aff-customer-info', params);
   }
 
   /**
@@ -1434,6 +1769,46 @@ export class RestClientV5 extends BaseRestClient {
    */
 
   /**
+   * Get VIP Margin Data.
+   *
+   * This margin data is for Unified account in particular.
+   *
+   * INFO
+   * Do not need authentication
+   */
+  getVIPMarginData(
+    params?: GetVIPMarginDataParamsV5,
+  ): Promise<APIResponseV3WithTime<VIPMarginDataV5>> {
+    return this.get('/v5/spot-margin-trade/data', params);
+  }
+
+  /**
+   * Get Historical Interest Rate
+   * You can query up to six months borrowing interest rate of Margin trading.
+   * INFO: Need authentication, the api key needs "Spot" permission. Only supports Unified account.
+   */
+  getHistoricalInterestRate(params: {
+    currency: string;
+    vipLevel?: string;
+    startTime?: number;
+    endTime?: number;
+  }): Promise<
+    APIResponseV3WithTime<{
+      list: {
+        timestamp: number;
+        currency: string;
+        hourlyBorrowRate: string;
+        vipLevel: string;
+      }[];
+    }>
+  > {
+    return this.getPrivate(
+      '/v5/spot-margin-trade/interest-rate-history',
+      params,
+    );
+  }
+
+  /**
    * Turn spot margin trade on / off in your UTA account.
    *
    * CAUTION
@@ -1453,6 +1828,15 @@ export class RestClientV5 extends BaseRestClient {
    */
   setSpotMarginLeverage(leverage: string): Promise<APIResponseV3WithTime<{}>> {
     return this.postPrivate('/v5/spot-margin-trade/set-leverage', { leverage });
+  }
+
+  /**
+   * Query the Spot margin status and leverage of Unified account.
+   *
+   * Covers: Margin trade (Unified Account)
+   */
+  getSpotMarginState(): Promise<APIResponseV3WithTime<SpotMarginStateV5>> {
+    return this.getPrivate('/v5/spot-margin-trade/state');
   }
 
   /**
@@ -1671,7 +2055,7 @@ export class RestClientV5 extends BaseRestClient {
     startTime?: number;
     endTime?: number;
     limit?: number;
-  }): Promise<APIResponseV3WithTime<{ marginToken: any[] }>> {
+  }): Promise<APIResponseV3WithTime<{ loanInfo: any[] }>> {
     return this.getPrivate('/v5/ins-loan/loan-order', params);
   }
 
@@ -1702,5 +2086,79 @@ export class RestClientV5 extends BaseRestClient {
     APIResponseV3WithTime<{ ltvInfo: any[] }>
   > {
     return this.getPrivate('/v5/ins-loan/ltv-convert');
+  }
+
+  /**
+   * Bind or unbind UID for the institutional loan product.
+   *
+   * INFO
+   * Risk unit designated UID cannot be unbound
+   * This endpoint can only be called by uids in the risk unit list
+   * The UID must be upgraded to UTA Pro if you try to bind it.
+   * When the API is operated through the API Key of any UID in the risk unit, the UID is bound or unbound in the risk unit.
+   */
+  bindOrUnbindUID(params: { uid: string; operate: '0' | '1' }): Promise<
+    APIResponseV3WithTime<{
+      uid: string;
+      operate: '0' | '1';
+    }>
+  > {
+    return this.postPrivate('/v5/ins-loan/association-uid', params);
+  }
+
+  /**
+   *
+   ****** Broker
+   *
+   */
+
+  /**
+   * Get Exchange Broker Earning.
+   *
+   * INFO
+   * Use exchange broker master account to query
+   * The data can support up to past 1 months until T-1. To extract data from over a month ago, please contact your Relationship Manager
+   * begin & end are either entered at the same time or not entered, and latest 7 days data are returned by default
+   * API rate limit: 10 req / sec
+   */
+  getExchangeBrokerEarnings(
+    params?: GetExchangeBrokerEarningsParamsV5,
+  ): Promise<APIResponseV3WithTime<ExchangeBrokerEarningResultV5>> {
+    return this.getPrivate('/v5/broker/earnings-info', params);
+  }
+
+  /**
+   * Get Exchange Broker Account Info.
+   *
+   * INFO
+   * Use exchange broker master account to query
+   * API rate limit: 10 req / sec
+   */
+  getExchangeBrokerAccountInfo(): Promise<
+    APIResponseV3WithTime<ExchangeBrokerAccountInfoV5>
+  > {
+    return this.getPrivate('/v5/broker/account-info');
+  }
+
+  /**
+   * Get Sub Account Deposit Records.
+   *
+   * Exchange broker can query subaccount's deposit records by main UID's API key without specifying uid.
+   *
+   * API rate limit: 300 req / min
+   *
+   * TIP
+   * endTime - startTime should be less than 30 days. Queries for the last 30 days worth of records by default.
+   */
+  getBrokerSubAccountDeposits(params?: GetBrokerSubAccountDepositsV5): Promise<
+    APIResponseV3WithTime<{
+      rows: ExchangeBrokerSubAccountDepositRecordV5[];
+      nextPageCursor: string;
+    }>
+  > {
+    return this.getPrivate(
+      '/v5/broker/asset/query-sub-member-deposit-record',
+      params,
+    );
   }
 }

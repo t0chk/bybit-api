@@ -75,6 +75,20 @@ export interface LinearInverseInstrumentInfoV5 {
   copyTrading: CopyTradingV5;
   upperFundingRate: string;
   lowerFundingRate: string;
+  isPreListing: boolean;
+  preListingInfo: {
+    curAuctionPhase: string;
+    phases: {
+      phase: string;
+      startTime: string;
+      endTime: string;
+    }[];
+    auctionFeeInfo: {
+      auctionFeeRate: string;
+      takerFeeRate: string;
+      makerFeeRate: string;
+    };
+  } | null;
 }
 
 export interface OptionInstrumentInfoV5 {
@@ -120,7 +134,7 @@ export interface SpotInstrumentInfoV5 {
   riskParameters: {
     limitParameter: string;
     marketParameter: string;
-  }
+  };
 }
 
 type InstrumentInfoV5Mapping = {
@@ -170,6 +184,9 @@ export interface TickerLinearInverseV5 {
   bid1Price: string;
   ask1Price: string;
   bid1Size: string;
+  preOpenPrice: string;
+  preQty: string;
+  curPreListingPhase: string;
 }
 
 export interface TickerOptionV5 {
@@ -289,4 +306,11 @@ export interface DeliveryPriceV5 {
   symbol: string;
   deliveryPrice: string;
   deliveryTime: string;
+}
+
+export interface LongShortRatioV5 {
+  symbol: string;
+  buyRatio: string;
+  sellRatio: string;
+  timestamp: string;
 }

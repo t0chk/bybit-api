@@ -25,6 +25,7 @@ export interface CreateSubApiKeyParamsV5 {
 }
 
 export interface UpdateApiKeyParamsV5 {
+  apikey?: string;
   readOnly?: 0 | 1;
   ips?: string[];
   permissions: PermissionsV5;
@@ -38,4 +39,10 @@ export interface UpdateSubApiKeyUpdateParamsV5 {
 
 export interface DeleteSubMemberParamsV5 {
   subMemberId: string;
+}
+
+export interface GetSubAccountAllApiKeysParamsV5 {
+  subMemberId: string;
+  limit?: number;
+  cursor?: string;
 }

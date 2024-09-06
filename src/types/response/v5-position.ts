@@ -4,6 +4,8 @@ import {
   OrderSideV5,
   OrderTypeV5,
   PositionIdx,
+  PositionSideV5,
+  PositionStatusV5,
   StopOrderTypeV5,
   TPSLModeV5,
   TradeModeV5,
@@ -14,16 +16,16 @@ export interface PositionV5 {
   riskId: number;
   riskLimitValue: string;
   symbol: string;
-  side: 'Buy' | 'Sell' | 'None';
+  side: PositionSideV5;
   size: string;
   avgPrice: string;
   positionValue: string;
   tradeMode: TradeModeV5;
   autoAddMargin?: number;
-  positionStatus: 'Normal' | 'Liq' | 'Adl';
+  positionStatus: PositionStatusV5;
   leverage?: string;
   markPrice: string;
-  liqPrice: string;
+  liqPrice: string | '';
   bustPrice?: string;
   positionIM?: string;
   positionMM?: string;
@@ -31,10 +33,21 @@ export interface PositionV5 {
   takeProfit?: string;
   stopLoss?: string;
   trailingStop?: string;
+  sessionAvgPrice: string | '';
+  delta?: string;
+  gamma?: string;
+  vega?: string;
+  theta?: string;
   unrealisedPnl: string;
+  curRealisedPnl: string;
   cumRealisedPnl: string;
+  adlRankIndicator: number;
+  isReduceOnly: boolean;
+  mmrSysUpdatedTime: string | '';
+  leverageSysUpdatedTime: string | '';
   createdTime: string;
   updatedTime: string;
+  seq: number;
 }
 
 export interface SetRiskLimitResultV5 {
@@ -57,7 +70,7 @@ export interface AddOrReduceMarginResultV5 {
   positionValue: string;
   leverage: string;
   autoAddMargin: 0 | 1;
-  positionStatus: 'Normal' | 'Liq' | 'Adl';
+  positionStatus: PositionStatusV5;
   positionIM: string;
   positionMM: string;
   takeProfit: string;
@@ -115,4 +128,29 @@ export interface ClosedPnLV5 {
   leverage: string;
   createdTime: string;
   updatedTime: string;
+}
+
+export interface MovePositionResultV5 {
+  blockTradeId: string;
+  status: 'Processing' | 'Rejected';
+  rejectParty: '' | 'Taker' | 'Maker' | 'bybit';
+}
+
+export interface MovePositionHistoryV5 {
+  blockTradeId: string;
+  category: 'linear' | 'spot' | 'option';
+  orderId: string;
+  userId: number;
+  symbol: string;
+  side: 'Buy' | 'Sell';
+  price: string;
+  qty: string;
+  execFee: string;
+  status: 'Processing' | 'Filled' | 'Rejected';
+  execId: string;
+  resultCode: number;
+  resultMessage: string;
+  createdAt: number;
+  updatedAt: number;
+  rejectParty: '' | 'Taker' | 'Maker' | 'bybit';
 }

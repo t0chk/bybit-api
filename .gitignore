@@ -23,3 +23,8 @@ lib
 bundleReport.html
 .history/
 rawReq.ts
+localtest.sh
+localtest.ts
+privaterepotracker
+restClientRegex.ts
+

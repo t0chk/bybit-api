@@ -60,11 +60,14 @@ export interface CollateralInfoV5 {
   currency: string;
   hourlyBorrowRate: string;
   maxBorrowingAmount: string;
-  freeBorrowingAmount: string;
+  freeBorrowAmount: string;
+  freeBorrowingLimit: string;
   borrowAmount: string;
   availableToBorrow: string;
   borrowable: boolean;
+  borrowUsageRate: string;
   marginCollateral: boolean;
+  collateralSwitch: boolean;
   collateralRatio: string;
 }
 
@@ -86,6 +89,8 @@ export interface FeeRateV5 {
 export interface AccountInfoV5 {
   unifiedMarginStatus: number;
   marginMode: AccountMarginModeV5;
+  isMasterTrader: boolean;
+  spotHedgingStatus: string;
   updatedTime: string;
 }
 
@@ -124,4 +129,10 @@ export interface MMPStateV5 {
 export interface RepayLiabilityResultV5 {
   coin: string;
   repaymentQty: string;
+}
+
+export interface DCPInfoV5 {
+  product: 'SPOT' | 'DERIVATIVES' | 'OPTIONS';
+  dcpStatus: 'ON';
+  timeWindow: string;
 }
