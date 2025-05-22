@@ -7,11 +7,9 @@ const client = new RestClientV5({
 });
 
 client
-  .getCoinBalance({
-    accountType: 'UNIFIED',
-    coin: 'USDT',
-    toAccountType: 'FUND',
-    withLtvTransferSafeAmount: 1,
+  .getBorrowableCoins({
+    currency: 'USDT',
+    vipLevel: 'VIP0',
   })
   .then((response) => {
     console.log(response);

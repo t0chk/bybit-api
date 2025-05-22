@@ -7,11 +7,10 @@ const client = new RestClientV5({
 });
 
 client
-  .getCoinBalance({
-    accountType: 'UNIFIED',
-    coin: 'USDT',
-    toAccountType: 'FUND',
-    withLtvTransferSafeAmount: 1,
+  .adjustCollateralAmount({
+    orderId: '1794267532472646144',
+    amount: '0.001',
+    direction: '1',
   })
   .then((response) => {
     console.log(response);

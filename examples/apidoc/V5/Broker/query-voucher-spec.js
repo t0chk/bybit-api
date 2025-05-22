@@ -7,11 +7,8 @@ const client = new RestClientV5({
 });
 
 client
-  .getCoinBalance({
-    accountType: 'UNIFIED',
-    coin: 'USDT',
-    toAccountType: 'FUND',
-    withLtvTransferSafeAmount: 1,
+  .getBrokerIssuedVoucher({
+    id: '80209',
   })
   .then((response) => {
     console.log(response);

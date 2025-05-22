@@ -7,12 +7,7 @@ const client = new RestClientV5({
 });
 
 client
-  .getCoinBalance({
-    accountType: 'UNIFIED',
-    coin: 'USDT',
-    toAccountType: 'FUND',
-    withLtvTransferSafeAmount: 1,
-  })
+  .getRepaymentHistory({ repayId: '1794271131730737664' })
   .then((response) => {
     console.log(response);
   })

@@ -7,12 +7,7 @@ const client = new RestClientV5({
 });
 
 client
-  .getCoinBalance({
-    accountType: 'UNIFIED',
-    coin: 'USDT',
-    toAccountType: 'FUND',
-    withLtvTransferSafeAmount: 1,
-  })
+  .getUnpaidLoanOrders({ orderId: '1793683005081680384' })
   .then((response) => {
     console.log(response);
   })

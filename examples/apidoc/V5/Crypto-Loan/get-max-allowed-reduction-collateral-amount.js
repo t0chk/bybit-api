@@ -7,12 +7,7 @@ const client = new RestClientV5({
 });
 
 client
-  .getCoinBalance({
-    accountType: 'UNIFIED',
-    coin: 'USDT',
-    toAccountType: 'FUND',
-    withLtvTransferSafeAmount: 1,
-  })
+  .getMaxAllowedReductionCollateralAmount({ orderId: '1794267532472646144' })
   .then((response) => {
     console.log(response);
   })

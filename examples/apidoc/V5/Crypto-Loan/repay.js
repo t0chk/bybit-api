@@ -7,11 +7,9 @@ const client = new RestClientV5({
 });
 
 client
-  .getCoinBalance({
-    accountType: 'UNIFIED',
-    coin: 'USDT',
-    toAccountType: 'FUND',
-    withLtvTransferSafeAmount: 1,
+  .repayCryptoLoan({
+    orderId: '1794267532472646144',
+    amount: '100',
   })
   .then((response) => {
     console.log(response);

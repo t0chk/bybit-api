@@ -7,11 +7,12 @@ const client = new RestClientV5({
 });
 
 client
-  .getCoinBalance({
-    accountType: 'UNIFIED',
-    coin: 'USDT',
-    toAccountType: 'FUND',
-    withLtvTransferSafeAmount: 1,
+  .borrowCryptoLoan({
+    loanCurrency: 'USDT',
+    loanAmount: '550',
+    collateralCurrency: 'BTC',
+    loanTerm: null,
+    collateralAmount: null,
   })
   .then((response) => {
     console.log(response);
